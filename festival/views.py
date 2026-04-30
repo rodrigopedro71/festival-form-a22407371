@@ -47,3 +47,46 @@ def editar_concerto_view(request, concerto_id):
     }
 
     return render(request, 'festival/editar_concerto.html', context)
+
+def editar_palco_view(request, palco_id):
+    palco = get_object_or_404(Palco, id=palco_id)
+
+    if request.method == 'POST':
+        form = PalcoForm(request.POST, instance=palco)
+        if form.is_valid():
+            form.save()
+            return redirect('concerto', concerto_id=palco.id)
+    else:
+        form = PalcoForm(instance=palco)
+
+    context = {
+        'palco': palco,
+        'form': form,
+    }
+
+    return render(request, 'festival/editar_palco.html', context)
+
+def apaga_concerto_view(request, concerto_id):
+    concerto = get_object_or_404(Concerto, id=concerto_id)
+
+    if request.method == "POST":
+        concerto.delete()
+        return redirect("palcos")
+
+    return redirect("concerto", concerto_id=concerto.id)
+
+def criar_concerto_view(request):
+    if request.method == 'POST':
+        form = ConcertoForm(request.POST)
+
+        if form.is_valid():
+            concerto = form.save()
+            return redirect('concerto', concerto_id=concerto.id)
+    else:
+        form = ConcertoForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'festival/criar_concerto.html', context)
